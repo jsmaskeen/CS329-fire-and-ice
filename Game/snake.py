@@ -16,3 +16,21 @@ class Snake:
         
     def change_direction(self, new_direction):
         self.direction = new_direction
+        
+    def get_action(self, dir):
+        if self.direction == dir:
+            return 0  # Straight
+        
+        if (self.direction == (0, -1) and dir == (-1, 0)) or \
+           (self.direction == (0, 1) and dir == (1, 0)) or \
+           (self.direction == (1, 0) and dir == (0, -1)) or \
+           (self.direction == (-1, 0) and dir == (0, 1)):
+            return 1  # Left turn
+        
+        if (self.direction == (0, -1) and dir == (1, 0)) or \
+           (self.direction == (0, 1) and dir == (-1, 0)) or \
+           (self.direction == (1, 0) and dir == (0, 1)) or \
+           (self.direction == (-1, 0) and dir == (0, -1)):
+            return 2  # Right turn
+        
+        return -1
