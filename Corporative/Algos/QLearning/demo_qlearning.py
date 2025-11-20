@@ -3,10 +3,11 @@ import sys
 import time
 import pygame
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Add parent directories to path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from Game.game import Game
-from Algos.DeepQLearning.DeepQAlgo import QLearningAgent
+from QAlgo import QLearningAgent
 
 class QLearningGameDemo:
     def __init__(self, model_path='models/qlearning_snake.pkl', width=15, height=15, cell_size=30):
