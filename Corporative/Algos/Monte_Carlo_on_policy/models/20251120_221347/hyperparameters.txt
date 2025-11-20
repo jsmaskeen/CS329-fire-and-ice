@@ -1,0 +1,11 @@
+train: True
+test: False
+plot: False
+width: 15
+height: 15
+episodes: 100000
+save_interval: 10000
+model_path: models/mc_snake.pkl
+load_existing: False
+test_episodes: 100
+gamma: 0.95

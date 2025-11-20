@@ -31,10 +31,10 @@ except ModuleNotFoundError:
                         "or a 'game.py' file somewhere in the project and that the correct path is on sys.path."
                     ) from e
 
-from MonteCarloOnpolicyalgo import MonteCarloAgent
+from monte_carlo_agent import MonteCarloAgent
 
-class QLearningGameDemo:
-    def __init__(self, model_path='models/qlearning_snake.pkl', width=15, height=15, cell_size=30):
+class MonteCarloGameDemo:
+    def __init__(self, model_path='models/mc_snake.pkl', width=15, height=15, cell_size=30):
         self.width = width
         self.height = height
         self.cell_size = cell_size
@@ -245,7 +245,7 @@ def main():
 
     args = parser.parse_args()
 
-    demo = QLearningGameDemo(
+    demo = MonteCarloGameDemo(
         model_path=args.model_path,
         width=args.width,
         height=args.height,

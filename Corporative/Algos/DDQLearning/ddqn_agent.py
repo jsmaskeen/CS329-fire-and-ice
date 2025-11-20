@@ -24,7 +24,7 @@ from Game.game import Game
 
 
 class MLP(nn.Module):
-    def __init__(self, input_dim, output_dim, hidden_dim=128):
+    def __init__(self, input_dim, output_dim, hidden_dim=256):
         super(MLP, self).__init__()
         self.net = nn.Sequential(
             nn.Linear(input_dim, hidden_dim),
@@ -58,7 +58,7 @@ class DDQNAgent:
     """
     A Double Deep Q-Network agent.
     """
-    def __init__(self, state_size=22, action_size=9, hidden_size=128,
+    def __init__(self, state_size=22, action_size=9, hidden_size=256,
                  lr=1e-3, gamma=0.99, epsilon=1.0, epsilon_min=0.01, epsilon_decay=0.995,
                  buffer_size=20000, batch_size=64, target_update=500, device=None):
         self.state_size = state_size
@@ -228,7 +228,7 @@ class DDQNAgent:
         if save_path:
             plt.savefig(save_path, dpi=300, bbox_inches='tight')
             # print(f"Training progress plot saved to {save_path}")
-        
+
         if show:
             plt.show()
         else:
@@ -261,14 +261,14 @@ def train_ddqn_agent(width=15, height=15, num_episodes=2000,
         log_path = os.path.join(experiment_dir, 'training_log.csv')
         log_file = open(log_path, 'w')
         log_file.write("Episode,Score,Steps,AvgScore,Epsilon\n")
-        
+
         # Setup plot path
         plot_path = os.path.join(experiment_dir, 'training_plot.png')
-        
+
         # Setup checkpoints dir
         checkpoints_dir = os.path.join(experiment_dir, 'checkpoints')
         os.makedirs(checkpoints_dir, exist_ok=True)
-        
+
         # Setup best model path
         best_model_path = os.path.join(experiment_dir, 'best_model.pth')
 
@@ -288,7 +288,7 @@ def train_ddqn_agent(width=15, height=15, num_episodes=2000,
             reward, next_state, done = env.step(snake1_action, snake2_action)
 
             agent.push_transition(state, action, reward, next_state, done)
-            
+
             # Optimize model only every 'train_every' steps
             if agent.steps_done % train_every == 0:
                 agent.optimize_model()
@@ -329,7 +329,7 @@ def train_ddqn_agent(width=15, height=15, num_episodes=2000,
         if episode % 100 == 0:
             avg_length = np.mean(agent.episode_lengths[-100:]) if len(agent.episode_lengths) >= 100 else np.mean(agent.episode_lengths)
             print(f"Episode {episode:6d} | Score: {env.score:3d} | Avg Score: {avg_score:6.2f} | Best: {best_score:3d} | Steps: {steps:4d} | Avg Steps: {avg_length:6.1f} | Eps: {agent.epsilon:.3f}")
-            
+
             # Update plot in real-time
             if experiment_dir:
                 agent.plot_training_progress(save_path=plot_path, show=False)
@@ -351,7 +351,7 @@ def train_ddqn_agent(width=15, height=15, num_episodes=2000,
         agent.save_model(final_path)
     else:
         agent.save_model(model_path)
-        
+
     print("\nDDQN training completed!")
     print(f"Best score achieved: {best_score}")
     return agent

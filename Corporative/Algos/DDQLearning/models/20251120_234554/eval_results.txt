@@ -1,0 +1,15 @@
+==================================================
+Evaluation Report
+==================================================
+Model Path: C:\Users\skabh\CS329-RL\Corporative\Algos\DDQLearning\models\20251120_234554\final_model.pth
+Episodes: 100
+Board Size: 15x15
+--------------------------------------------------
+Score Mean: 12.89
+Score Std:  7.49
+Score Max:  37
+Score Min:  1
+--------------------------------------------------
+Length Mean: 130.38
+Length Std:  78.08
+==================================================
