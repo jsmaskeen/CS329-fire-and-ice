@@ -7,10 +7,10 @@ import os
 import sys
 import argparse
 
-# Add current directory to path to enable imports
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# Add parent directories to path to enable imports
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from Algos.DeepQLearning.DeepQAlgo import train_q_learning_agent, test_q_learning_agent
+from QAlgo import train_q_learning_agent, test_q_learning_agent
 
 def main():
     parser = argparse.ArgumentParser(description='Train Q-Learning agent for 2-player Snake game')
