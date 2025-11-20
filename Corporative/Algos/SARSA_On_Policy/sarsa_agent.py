@@ -34,7 +34,7 @@ except ModuleNotFoundError:
                         "or a 'game.py' file somewhere in the project and that the correct path is on sys.path."
                     ) from e
 
-class QLearningAgent:
+class SARSAAgent:
     def __init__(self, state_size=22, action_size=9, learning_rate=0.1, discount_factor=0.95, epsilon=1.0, epsilon_min=0.01, epsilon_decay=0.995):
         self.state_size = state_size
         self.action_size = action_size
@@ -120,7 +120,7 @@ class QLearningAgent:
             print(f"No saved model found at {filepath}")
             return False
 
-    def plot_training_progress(self, save_path=None):
+    def plot_training_progress(self, save_path=None, show=True):
         """Plot training statistics"""
         fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 10))
 
@@ -160,20 +160,39 @@ class QLearningAgent:
             plt.savefig(save_path, dpi=300, bbox_inches='tight')
             print(f"Training progress plot saved to {save_path}")
 
-        plt.show()
+        if show:
+            plt.show()
+        else:
+            plt.close(fig)
 
-def train_q_learning_agent(width=15, height=15, num_episodes=10000,
-                         save_interval=1000, model_path='models/qlearning_snake.pkl',
-                         load_existing=True):
+def train_sarsa_agent(width=15, height=15, num_episodes=10000,
+                         save_interval=1000, model_path='models/sarsa_snake.pkl',
+                         load_existing=True, learning_rate=0.1, discount_factor=0.95,
+                         epsilon=1.0, epsilon_min=0.01, epsilon_decay=0.995,
+                         experiment_dir=None):
     env = Game(width, height)
-    agent = QLearningAgent()
+    agent = SARSAAgent(learning_rate=learning_rate, discount_factor=discount_factor,
+                       epsilon=epsilon, epsilon_min=epsilon_min, epsilon_decay=epsilon_decay)
 
-    if load_existing:
+    if load_existing and os.path.exists(model_path):
         agent.load_model(model_path)
 
-    print(f"Starting Q-Learning training for {num_episodes} episodes...")
+    print(f"Starting SARSA training for {num_episodes} episodes...")
     print(f"Game size: {width}x{height}")
     print(f"Initial epsilon: {agent.epsilon}")
+
+    # Setup logging
+    log_file = None
+    if experiment_dir:
+        log_path = os.path.join(experiment_dir, 'training_log.csv')
+        log_file = open(log_path, 'w')
+        log_file.write("Episode,Score,Steps,AvgScore,Epsilon,QStates\n")
+
+        checkpoints_dir = os.path.join(experiment_dir, 'checkpoints')
+        os.makedirs(checkpoints_dir, exist_ok=True)
+
+        best_model_path = os.path.join(experiment_dir, 'best_model.pkl')
+        plot_path = os.path.join(experiment_dir, 'training_plot.png')
 
     best_score = -float('inf')
 
@@ -206,11 +225,21 @@ def train_q_learning_agent(width=15, height=15, num_episodes=10000,
         agent.episode_lengths.append(steps)
         agent.epsilon_history.append(agent.epsilon)
 
+        # Calculate average score
+        avg_score = np.mean(agent.scores[-100:]) if len(agent.scores) >= 100 else np.mean(agent.scores)
+
+        # Log to CSV
+        if log_file:
+            log_file.write(f"{episode},{env.score},{steps},{avg_score:.2f},{agent.epsilon:.4f},{len(agent.q_table)}\n")
+            log_file.flush()
+
+        # Save best model
         if env.score > best_score:
             best_score = env.score
+            if experiment_dir:
+                agent.save_model(best_model_path)
 
         if episode % 100 == 0:
-            avg_score = np.mean(agent.scores[-100:]) if len(agent.scores) >= 100 else np.mean(agent.scores)
             avg_length = np.mean(agent.episode_lengths[-100:]) if len(agent.episode_lengths) >= 100 else np.mean(agent.episode_lengths)
 
             print(f"Episode {episode:6d} | "
@@ -222,10 +251,26 @@ def train_q_learning_agent(width=15, height=15, num_episodes=10000,
                   f"Epsilon: {agent.epsilon:.3f} | "
                   f"Q-states: {len(agent.q_table):6d}")
 
-        if episode % save_interval == 0 and episode > 0:
-            agent.save_model(model_path)
+            # Update plot in real-time
+            if experiment_dir:
+                agent.plot_training_progress(save_path=plot_path, show=False)
 
-    agent.save_model(model_path)
+        if episode % save_interval == 0 and episode > 0:
+            if experiment_dir:
+                checkpoint_path = os.path.join(checkpoints_dir, f'episode_{episode}.pkl')
+                agent.save_model(checkpoint_path)
+            else:
+                agent.save_model(model_path)
+
+    if log_file:
+        log_file.close()
+
+    # Final save
+    if experiment_dir:
+        final_path = os.path.join(experiment_dir, 'final_model.pkl')
+        agent.save_model(final_path)
+    else:
+        agent.save_model(model_path)
 
     print(f"\nTraining completed!")
     print(f"Best score achieved: {best_score}")
@@ -234,10 +279,10 @@ def train_q_learning_agent(width=15, height=15, num_episodes=10000,
 
     return agent
 
-def test_q_learning_agent(model_path='models/qlearning_snake.pkl', width=15, height=15,
+def test_sarsa_agent(model_path='models/sarsa_snake.pkl', width=15, height=15,
                          num_test_episodes=100, render=False):
     env = Game(width, height)
-    agent = QLearningAgent()
+    agent = SARSAAgent()
 
     if not agent.load_model(model_path):
         print("No trained model found!")
@@ -245,7 +290,7 @@ def test_q_learning_agent(model_path='models/qlearning_snake.pkl', width=15, hei
 
     agent.epsilon = 0.0
 
-    print(f"Testing Q-Learning agent for {num_test_episodes} episodes...")
+    print(f"Testing SARSA agent for {num_test_episodes} episodes...")
 
     test_scores = []
     test_lengths = []

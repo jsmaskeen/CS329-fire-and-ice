@@ -31,10 +31,10 @@ except ModuleNotFoundError:
                         "or a 'game.py' file somewhere in the project and that the correct path is on sys.path."
                     ) from e
 
-from SARSA_On_Policy_Algo import QLearningAgent
+from sarsa_agent import SARSAAgent
 
-class QLearningGameDemo:
-    def __init__(self, model_path='models/qlearning_snake.pkl', width=15, height=15, cell_size=30):
+class SARSAGameDemo:
+    def __init__(self, model_path='models/sarsa_snake.pkl', width=15, height=15, cell_size=30):
         self.width = width
         self.height = height
         self.cell_size = cell_size
@@ -62,12 +62,12 @@ class QLearningGameDemo:
 
         # Initialize game and agent
         self.game = Game(width, height)
-        self.agent = QLearningAgent()
+        self.agent = SARSAAgent()
 
         # Load trained model
         if not self.agent.load_model(model_path):
             print(f"No trained model found at {model_path}")
-            print("Please train the agent first using train_qlearning.py")
+            print("Please train the agent first using train_sarsa.py")
             sys.exit(1)
 
         # Set to pure exploitation (no exploration)
@@ -245,7 +245,7 @@ def main():
 
     args = parser.parse_args()
 
-    demo = QLearningGameDemo(
+    demo = SARSAGameDemo(
         model_path=args.model_path,
         width=args.width,
         height=args.height,

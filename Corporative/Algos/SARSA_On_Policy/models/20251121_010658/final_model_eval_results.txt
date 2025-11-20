@@ -1,0 +1,6 @@
+Evaluation Results for models\20251121_010658\final_model.pkl
+Episodes: 100
+Mean Score: 1.86 ± 1.79
+Max Score: 7
+Min Score: 0
+Mean Episode Length: 285.32 ± 165.97
