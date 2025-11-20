@@ -94,6 +94,21 @@ class Game:
         head1 = self.snake1.body[0]
         head2 = self.snake2.body[0]
 
+        # Pre-calculate obstacles for faster lookup
+        # For Snake 1: obstacles are walls, its own body (excluding head), and Snake 2's entire body
+        obstacles1 = set(tuple(x) for x in self.snake1.body[1:])
+        obstacles1.update(tuple(x) for x in self.snake2.body)
+        
+        # For Snake 2: obstacles are walls, its own body (excluding head), and Snake 1's entire body
+        obstacles2 = set(tuple(x) for x in self.snake2.body[1:])
+        obstacles2.update(tuple(x) for x in self.snake1.body)
+
+        def is_unsafe(pos, obstacles):
+            x, y = pos
+            if not (0 <= x < self.width and 0 <= y < self.height):
+                return True
+            return pos in obstacles
+
         dir_north1 = self.snake1.direction == (0, -1)
         dir_south1 = self.snake1.direction == (0, 1)
         dir_east1 = self.snake1.direction == (1, 0)
@@ -114,31 +129,31 @@ class Game:
         point_east2 = (head2[0] + 1, head2[1])
         point_west2 = (head2[0] - 1, head2[1])
         
-        danger_left1 = (dir_north1 and self.check_collision(point_west1, 0)) or \
-                       (dir_south1 and self.check_collision(point_east1, 0)) or \
-                       (dir_east1 and self.check_collision(point_north1, 0)) or \
-                       (dir_west1 and self.check_collision(point_south1, 0))
-        danger_right1 = (dir_north1 and self.check_collision(point_east1, 0)) or \
-                        (dir_south1 and self.check_collision(point_west1, 0)) or \
-                        (dir_east1 and self.check_collision(point_south1, 0)) or \
-                        (dir_west1 and self.check_collision(point_north1, 0))
-        danger_straight1 = (dir_north1 and self.check_collision(point_north1, 0)) or \
-                           (dir_south1 and self.check_collision(point_south1, 0)) or \
-                           (dir_east1 and self.check_collision(point_east1, 0)) or \
-                           (dir_west1 and self.check_collision(point_west1, 0))
+        danger_left1 = (dir_north1 and is_unsafe(point_west1, obstacles1)) or \
+                       (dir_south1 and is_unsafe(point_east1, obstacles1)) or \
+                       (dir_east1 and is_unsafe(point_north1, obstacles1)) or \
+                       (dir_west1 and is_unsafe(point_south1, obstacles1))
+        danger_right1 = (dir_north1 and is_unsafe(point_east1, obstacles1)) or \
+                        (dir_south1 and is_unsafe(point_west1, obstacles1)) or \
+                        (dir_east1 and is_unsafe(point_south1, obstacles1)) or \
+                        (dir_west1 and is_unsafe(point_north1, obstacles1))
+        danger_straight1 = (dir_north1 and is_unsafe(point_north1, obstacles1)) or \
+                           (dir_south1 and is_unsafe(point_south1, obstacles1)) or \
+                           (dir_east1 and is_unsafe(point_east1, obstacles1)) or \
+                           (dir_west1 and is_unsafe(point_west1, obstacles1))
         
-        danger_left2 = (dir_north2 and self.check_collision(point_west2, 1)) or \
-                       (dir_south2 and self.check_collision(point_east2, 1)) or \
-                       (dir_east2 and self.check_collision(point_north2, 1)) or \
-                       (dir_west2 and self.check_collision(point_south2, 1))
-        danger_right2 = (dir_north2 and self.check_collision(point_east2, 1)) or \
-                        (dir_south2 and self.check_collision(point_west2, 1)) or \
-                        (dir_east2 and self.check_collision(point_south2, 1)) or \
-                        (dir_west2 and self.check_collision(point_north2, 1))
-        danger_straight2 = (dir_north2 and self.check_collision(point_north2, 1)) or \
-                           (dir_south2 and self.check_collision(point_south2, 1)) or \
-                           (dir_east2 and self.check_collision(point_east2, 1)) or \
-                           (dir_west2 and self.check_collision(point_west2, 1))
+        danger_left2 = (dir_north2 and is_unsafe(point_west2, obstacles2)) or \
+                       (dir_south2 and is_unsafe(point_east2, obstacles2)) or \
+                       (dir_east2 and is_unsafe(point_north2, obstacles2)) or \
+                       (dir_west2 and is_unsafe(point_south2, obstacles2))
+        danger_right2 = (dir_north2 and is_unsafe(point_east2, obstacles2)) or \
+                        (dir_south2 and is_unsafe(point_west2, obstacles2)) or \
+                        (dir_east2 and is_unsafe(point_south2, obstacles2)) or \
+                        (dir_west2 and is_unsafe(point_north2, obstacles2))
+        danger_straight2 = (dir_north2 and is_unsafe(point_north2, obstacles2)) or \
+                           (dir_south2 and is_unsafe(point_south2, obstacles2)) or \
+                           (dir_east2 and is_unsafe(point_east2, obstacles2)) or \
+                           (dir_west2 and is_unsafe(point_west2, obstacles2))
 
         food_north1 = self.food[1] < head1[1]
         food_south1 = self.food[1] > head1[1]

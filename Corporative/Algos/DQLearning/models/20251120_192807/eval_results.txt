@@ -1,0 +1,15 @@
+==================================================
+Evaluation Report
+==================================================
+Model Path: C:\Users\Rajeev Wankar\Desktop\Aarsh IITGN\Semester_5\FAI\new\CS329-RL\Corporative\Algos\DQLearning\models\20251120_192807\best_model.pth
+Episodes: 100
+Board Size: 15x15
+--------------------------------------------------
+Score Mean: 11.16
+Score Std:  6.54
+Score Max:  27
+Score Min:  1
+--------------------------------------------------
+Length Mean: 323.54
+Length Std:  263.86
+==================================================
