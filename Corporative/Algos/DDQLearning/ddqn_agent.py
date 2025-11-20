@@ -20,7 +20,29 @@ import sys
 # Add Corporative directory to path to find Game
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
-from Game.game import Game
+try:
+    from Game.game import Game
+except ModuleNotFoundError:
+    try:
+        from game.game import Game
+    except ModuleNotFoundError:
+        try:
+            from game import Game
+        except ModuleNotFoundError:
+            # Attempt to add repository root to sys.path and retry imports
+            repo_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            if repo_root not in sys.path:
+                sys.path.append(repo_root)
+            try:
+                from Game.game import Game
+            except ModuleNotFoundError:
+                try:
+                    from game.game import Game
+                except ModuleNotFoundError as e:
+                    raise ModuleNotFoundError(
+                        "Could not import Game module. Ensure there is a 'Game' package (with __init__.py) "
+                        "or a 'game.py' file somewhere in the project and that the correct path is on sys.path."
+                    ) from e
 
 
 class MLP(nn.Module):
