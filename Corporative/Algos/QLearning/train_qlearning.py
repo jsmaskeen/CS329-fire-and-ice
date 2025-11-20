@@ -52,7 +52,8 @@ def main():
         )
         
         # Plot training progress
-        plot_path = args.model_path.replace('.pkl', '_training.png')
+        base_name, _ = os.path.splitext(args.model_path)
+        plot_path = base_name + '_training.png'
         agent.plot_training_progress(plot_path)
         
         # Test the trained agent
