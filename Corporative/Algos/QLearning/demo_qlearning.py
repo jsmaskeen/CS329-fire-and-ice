@@ -43,7 +43,8 @@ class QLearningGameDemo:
         # Load trained model
         if not self.agent.load_model(model_path):
             print(f"No trained model found at {model_path}")
-            print("Please train the agent first using train_qlearning.py")
+            print("Please provide a valid model path using --model-path")
+            print("Example: python demo_qlearning.py --model-path models/20231027_120000/best_model.pkl")
             sys.exit(1)
 
         # Set to pure exploitation (no exploration)
@@ -210,10 +211,11 @@ class QLearningGameDemo:
 
 def main():
     import argparse
+    import glob
 
     parser = argparse.ArgumentParser(description='Watch Q-Learning agent play Snake')
-    parser.add_argument('--model-path', type=str, default='models/qlearning_snake.pkl',
-                       help='Path to trained Q-learning model')
+    parser.add_argument('--model-path', type=str, default=None,
+                       help='Path to trained Q-learning model. If not provided, tries to find the latest best_model.pkl')
     parser.add_argument('--width', type=int, default=15, help='Game board width')
     parser.add_argument('--height', type=int, default=15, help='Game board height')
     parser.add_argument('--cell-size', type=int, default=30, help='Cell size in pixels')
@@ -221,8 +223,26 @@ def main():
 
     args = parser.parse_args()
 
+    model_path = args.model_path
+    if model_path is None:
+        # Try to find the latest model
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        models_dir = os.path.join(base_dir, 'models')
+        if os.path.exists(models_dir):
+            # Find all best_model.pkl files in subdirectories
+            model_files = glob.glob(os.path.join(models_dir, '*', 'best_model.pkl'))
+            if model_files:
+                # Sort by modification time
+                model_path = max(model_files, key=os.path.getmtime)
+                print(f"No model path provided. Using latest found: {model_path}")
+            else:
+                # Fallback to default if no timestamped folders found
+                model_path = 'models/qlearning_snake.pkl'
+        else:
+            model_path = 'models/qlearning_snake.pkl'
+
     demo = QLearningGameDemo(
-        model_path=args.model_path,
+        model_path=model_path,
         width=args.width,
         height=args.height,
         cell_size=args.cell_size
