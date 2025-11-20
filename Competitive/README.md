@@ -2,7 +2,7 @@
 
 Two AI snakes compete for the same food using Nash equilibrium strategies.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Installation
 ```bash
@@ -41,26 +41,6 @@ python quick_start.py --train --deep
 python quick_start.py --demo --deep
 ```
 
-## 🎯 Which Algorithm?
-
-| Feature | Tabular | Deep |
-|---------|---------|------|
-| **Training Time** | 10 min | 60 min |
-| **Best For** | Boards ≤15×15 | Boards ≥20×20 |
-| **Complexity** | Simple | Advanced |
-
-**Start with tabular** - it's faster and simpler.
-
-## 🎮 Demo Controls
-
-- **SPACE** - Pause/Resume
-- **R** - Restart
-- **+/-** - Speed
-- **N** - Next episode
-- **ESC** - Quit
-
-## 🔧 Advanced Usage
-
 ### Custom Training
 
 **Tabular:**
@@ -97,23 +77,6 @@ competitive/
 │   └── deep_nash_q/     # Deep learning algorithm
 └── models/              # Saved models
 ```
-
-## 🐛 Troubleshooting
-
-**Import errors:** Make sure you're in the `competitive/` folder.
-
-**Missing torch:** Run `pip install torch` for deep learning.
-
-**Unbalanced wins:** Normal early on, should reach ~50/50 after training.
-
-## 📊 Expected Results
-
-After full training:
-- Win rates: ~50% each
-- Avg rewards: 0-5 per episode
-- Behavior: Avoids walls, chases food, avoids collisions
-
----
 
 **Quick commands:**
 ```bash
