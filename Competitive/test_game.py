@@ -10,7 +10,7 @@ import os
 current_dir = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, current_dir)
 
-from game import CompetitiveSnakeGame
+from Game.game import CompetitiveSnakeGame
 
 def test_game():
     """Test basic game functionality"""

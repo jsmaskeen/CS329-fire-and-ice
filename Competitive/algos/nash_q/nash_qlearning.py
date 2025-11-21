@@ -286,7 +286,7 @@ def train_nash_q_learning(width=15, height=15, num_episodes=10000,
         learning_rate: Learning rate for both agents
         discount_factor: Discount factor for both agents
     """
-    from game import CompetitiveSnakeGame
+    from Game.game import CompetitiveSnakeGame
     
     # Initialize environment
     env = CompetitiveSnakeGame(width, height)

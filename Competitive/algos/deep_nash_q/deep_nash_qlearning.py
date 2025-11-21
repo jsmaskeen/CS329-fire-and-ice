@@ -446,7 +446,7 @@ def train_deep_nash_q_learning(width=15, height=15, num_episodes=5000,
         buffer_capacity: Replay buffer size
         hidden_size: Hidden layer size
     """
-    from game import CompetitiveSnakeGame
+    from Game.game import CompetitiveSnakeGame
     
     # Initialize environment
     env = CompetitiveSnakeGame(width, height)

@@ -60,7 +60,7 @@ Examples:
         print("="*60 + "\n")
         
         if args.deep:
-            from algos.deep_nash_q import train_deep_nash_q_learning
+            from Algos.deep_nash_q import train_deep_nash_q_learning
             train_deep_nash_q_learning(
                 width=10,
                 height=10,
@@ -70,7 +70,7 @@ Examples:
                 hidden_size=64  # Smaller for quick test
             )
         else:
-            from algos.nash_q import train_nash_q_learning
+            from Algos.nash_q import train_nash_q_learning
             train_nash_q_learning(
                 width=10,
                 height=10,
@@ -91,7 +91,7 @@ Examples:
         print("="*60 + "\n")
         
         if args.deep:
-            from algos.deep_nash_q import train_deep_nash_q_learning
+            from Algos.deep_nash_q import train_deep_nash_q_learning
             train_deep_nash_q_learning(
                 width=15,
                 height=15,
@@ -101,7 +101,7 @@ Examples:
                 hidden_size=128
             )
         else:
-            from algos.nash_q import train_nash_q_learning
+            from Algos.nash_q import train_nash_q_learning
             train_nash_q_learning(
                 width=15,
                 height=15,
@@ -120,9 +120,9 @@ Examples:
         
         try:
             if args.deep:
-                from algos.deep_nash_q.render_deep import run_demo
+                from Algos.deep_nash_q.render_deep import run_demo
             else:
-                from algos.nash_q.render import run_demo
+                from Algos.nash_q.render import run_demo
                 
             run_demo(
                 model_dir='models',

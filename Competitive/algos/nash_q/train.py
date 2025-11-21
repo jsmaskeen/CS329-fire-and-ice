@@ -11,7 +11,7 @@ import argparse
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from nash_qlearning import train_nash_q_learning, NashQLearningAgent
-from game import CompetitiveSnakeGame
+from Game.game import CompetitiveSnakeGame
 import numpy as np
 
 
