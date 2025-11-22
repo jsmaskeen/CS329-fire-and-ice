@@ -42,6 +42,8 @@ Examples:
                        help='Use Deep Nash Q-Learning (neural networks)')
     parser.add_argument('--episodes', type=int,
                        help='Custom number of training episodes')
+    parser.add_argument('--experiment-dir', type=str, default=None,
+                        help='Directory to store experiment logs, checkpoints and plots')
     
     args = parser.parse_args()
     
@@ -67,6 +69,7 @@ Examples:
                 num_episodes=100,
                 save_interval=50,
                 model_dir='models',
+                experiment_dir=args.experiment_dir,
                 hidden_size=64  # Smaller for quick test
             )
         else:
@@ -76,7 +79,8 @@ Examples:
                 height=10,
                 num_episodes=100,
                 save_interval=50,
-                model_dir='models'
+                model_dir='models',
+                experiment_dir=args.experiment_dir
             )
         
         print(f"\nQuick test completed! Run with --demo{' --deep' if args.deep else ''} to watch agents play.")
@@ -98,7 +102,8 @@ Examples:
                 num_episodes=episodes,
                 save_interval=300,
                 model_dir='models',
-                hidden_size=128
+                hidden_size=128,
+                experiment_dir=args.experiment_dir
             )
         else:
             from Algos.nash_q import train_nash_q_learning
@@ -107,7 +112,8 @@ Examples:
                 height=15,
                 num_episodes=episodes,
                 save_interval=500,
-                model_dir='models'
+                model_dir='models',
+                experiment_dir=args.experiment_dir
             )
         
         print(f"\nTraining completed! Models saved in models/")

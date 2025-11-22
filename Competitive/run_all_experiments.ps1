@@ -24,15 +24,20 @@ foreach ($algo in $algos) {
 
         Push-Location $algoDir
 
+        # Create a timestamped experiment directory for this algorithm
+        $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+        $expDir = Join-Path $baseDir (Join-Path "experiments" "$($algo.Name)_$timestamp")
+        New-Item -ItemType Directory -Force -Path $expDir | Out-Null
+
         # 1. Run Training
         Write-Host "Starting training for $($Episodes) episodes..." -ForegroundColor Yellow
-        $trainCmd = "python $($algo.TrainScript) --train --episodes $Episodes --save-interval $($SaveInterval)" 
+        $trainCmd = "python $($algo.TrainScript) --train --episodes $Episodes --save-interval $($SaveInterval) --experiment-dir `"$expDir`""
         Invoke-Expression $trainCmd
 
         if ($LASTEXITCODE -eq 0) {
-            # 2. Run Testing
+            # 2. Run Testing (write eval results into same experiment dir)
             Write-Host "Starting testing for $($TestEpisodes) episodes..." -ForegroundColor Yellow
-            $testCmd = "python $($algo.TrainScript) --test --test-episodes $TestEpisodes --save-interval $($SaveInterval)" 
+            $testCmd = "python $($algo.TrainScript) --test --test-episodes $TestEpisodes --save-interval $($SaveInterval) --experiment-dir `"$expDir`""
             Invoke-Expression $testCmd
         } else {
             Write-Host "Training failed for $($algo.Name)" -ForegroundColor Red

@@ -11,6 +11,7 @@ import os
 from collections import defaultdict
 from scipy.optimize import linprog
 import itertools
+import matplotlib.pyplot as plt
 
 
 class NashQLearningAgent:
@@ -273,7 +274,8 @@ class NashQLearningAgent:
 
 def train_nash_q_learning(width=15, height=15, num_episodes=10000,
                          save_interval=1000, model_dir='models',
-                         learning_rate=0.1, discount_factor=0.95):
+                         learning_rate=0.1, discount_factor=0.95,
+                         experiment_dir=None):
     """
     Train two agents using Nash Q-Learning in competitive environment
     
@@ -306,11 +308,42 @@ def train_nash_q_learning(width=15, height=15, num_episodes=10000,
     # Try to load existing models
     agent1.load(f"{model_dir}/agent1_nash.pkl")
     agent2.load(f"{model_dir}/agent2_nash.pkl")
+
+    # Setup experiment directory logging if requested (matches corporative structure)
+    log_file = None
+    checkpoints_dir = None
+    best_model_path = None
+    final_model_path = None
+    if experiment_dir:
+        os.makedirs(experiment_dir, exist_ok=True)
+        # CSV log
+        log_path = os.path.join(experiment_dir, 'training_log.csv')
+        log_file = open(log_path, 'w', encoding='utf-8')
+        log_file.write("Episode,Agent1Reward,Agent2Reward,Agent1AvgR,Agent2AvgR,Agent1Wins,Agent2Wins,Steps,Epsilon\n")
+
+        # Hyperparameters
+        hyper_path = os.path.join(experiment_dir, 'hyperparameters.txt')
+        with open(hyper_path, 'w', encoding='utf-8') as hf:
+            hf.write(f"algorithm: nash_q\n")
+            hf.write(f"width: {width}\nheight: {height}\n")
+            hf.write(f"num_episodes: {num_episodes}\n")
+            hf.write(f"save_interval: {save_interval}\n")
+            hf.write(f"learning_rate: {learning_rate}\n")
+            hf.write(f"discount_factor: {discount_factor}\n")
+
+        # Checkpoints dir and model paths
+        checkpoints_dir = os.path.join(experiment_dir, 'checkpoints')
+        os.makedirs(checkpoints_dir, exist_ok=True)
+        best_model_path = os.path.join(experiment_dir, 'best_model.pkl')
+        final_model_path = os.path.join(experiment_dir, 'final_model.pkl')
+        # Plot path
+        plot_path = os.path.join(experiment_dir, 'training_plot.png')
     
     print(f"Training Nash Q-Learning agents for {num_episodes} episodes")
     print(f"Game size: {width}x{height}")
     print(f"Learning rate: {learning_rate}, Discount: {discount_factor}")
     
+    best_score = -float('inf')
     for episode in range(num_episodes):
         state1, state2 = env.reset()
         
@@ -375,14 +408,86 @@ def train_nash_q_learning(width=15, height=15, num_episodes=10000,
                   f"Agent2: Score={info['snake2_score']:2d} Reward={episode_reward2:6.1f} AvgR={avg_reward2:6.1f} Win%={win_rate2:5.1f} | "
                   f"Steps={steps:3d} ε={agent1.epsilon:.3f} Q-states={len(agent1.q_table):5d}")
         
+        # Log to CSV if requested
+        if log_file:
+            log_file.write(f"{episode},{episode_reward1},{episode_reward2},{avg_reward1:.3f},{avg_reward2:.3f},{agent1.win_count},{agent2.win_count},{steps},{agent1.epsilon:.4f}\n")
+            log_file.flush()
+
         # Save models periodically
         if episode % save_interval == 0 and episode > 0:
+            # Default model dir save
             agent1.save(f"{model_dir}/agent1_nash.pkl")
             agent2.save(f"{model_dir}/agent2_nash.pkl")
+
+            # Also save checkpoint copies if experiment_dir provided
+            if checkpoints_dir:
+                cp1 = os.path.join(checkpoints_dir, f'agent1_episode_{episode}.pkl')
+                cp2 = os.path.join(checkpoints_dir, f'agent2_episode_{episode}.pkl')
+                agent1.save(cp1)
+                agent2.save(cp2)
+            # Update training plot
+            try:
+                if plot_path:
+                    plt.figure(figsize=(10, 6))
+                    # rewards
+                    plt.plot(agent1.total_rewards, label='Agent1 Reward')
+                    plt.plot(agent2.total_rewards, label='Agent2 Reward')
+                    # moving averages
+                    if len(agent1.total_rewards) > 100:
+                        ma1 = np.convolve(agent1.total_rewards, np.ones(100)/100, mode='valid')
+                        plt.plot(range(99, 99+len(ma1)), ma1, 'k--', label='A1 MA(100)')
+                    if len(agent2.total_rewards) > 100:
+                        ma2 = np.convolve(agent2.total_rewards, np.ones(100)/100, mode='valid')
+                        plt.plot(range(99, 99+len(ma2)), ma2, 'r--', label='A2 MA(100)')
+                    plt.xlabel('Episode')
+                    plt.ylabel('Reward')
+                    plt.title('Training Rewards')
+                    plt.legend()
+                    plt.tight_layout()
+                    plt.savefig(plot_path, dpi=150)
+                    plt.close()
+            except Exception:
+                pass
+
+        # Update best model based on top score seen this episode
+        max_episode_score = max(info.get('snake1_score', 0), info.get('snake2_score', 0))
+        if max_episode_score > best_score:
+            best_score = max_episode_score
+            # Save best models in experiment folder
+            if best_model_path:
+                agent1.save(best_model_path.replace('.pkl', '_agent1.pkl'))
+                agent2.save(best_model_path.replace('.pkl', '_agent2.pkl'))
     
     # Final save
     agent1.save(f"{model_dir}/agent1_nash.pkl")
     agent2.save(f"{model_dir}/agent2_nash.pkl")
+    if final_model_path:
+        agent1.save(final_model_path.replace('.pkl', '_agent1.pkl'))
+        agent2.save(final_model_path.replace('.pkl', '_agent2.pkl'))
+
+    if log_file:
+        log_file.close()
+    # Final plot
+    try:
+        if experiment_dir:
+            plt.figure(figsize=(10, 6))
+            plt.plot(agent1.total_rewards, label='Agent1 Reward')
+            plt.plot(agent2.total_rewards, label='Agent2 Reward')
+            if len(agent1.total_rewards) > 100:
+                ma1 = np.convolve(agent1.total_rewards, np.ones(100)/100, mode='valid')
+                plt.plot(range(99, 99+len(ma1)), ma1, 'k--', label='A1 MA(100)')
+            if len(agent2.total_rewards) > 100:
+                ma2 = np.convolve(agent2.total_rewards, np.ones(100)/100, mode='valid')
+                plt.plot(range(99, 99+len(ma2)), ma2, 'r--', label='A2 MA(100)')
+            plt.xlabel('Episode')
+            plt.ylabel('Reward')
+            plt.title('Training Rewards')
+            plt.legend()
+            plt.tight_layout()
+            plt.savefig(plot_path.replace('.png', '_final.png'), dpi=150)
+            plt.close()
+    except Exception:
+        pass
     
     print("\nTraining completed!")
     print(f"Agent 1 - Wins: {agent1.win_count}, Losses: {agent1.loss_count}, Draws: {agent1.draw_count}")

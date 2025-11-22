@@ -14,6 +14,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 from collections import deque, defaultdict
 import random
+import matplotlib.pyplot as plt
 
 
 class DQNetwork(nn.Module):
@@ -430,7 +431,7 @@ def train_deep_nash_q_learning(width=15, height=15, num_episodes=5000,
                                save_interval=500, model_dir='models',
                                learning_rate=0.001, discount_factor=0.95,
                                batch_size=64, buffer_capacity=50000,
-                               hidden_size=128):
+                               hidden_size=128, experiment_dir=None):
     """
     Train two agents using Deep Nash Q-Learning
     
@@ -472,6 +473,34 @@ def train_deep_nash_q_learning(width=15, height=15, num_episodes=5000,
     # Try to load existing models
     agent1.load(f"{model_dir}/agent1_deep_nash.pth")
     agent2.load(f"{model_dir}/agent2_deep_nash.pth")
+
+    # Setup experiment directory logging if requested (match corporative layout)
+    log_file = None
+    checkpoints_dir = None
+    best_model_path = None
+    final_model_path = None
+    if experiment_dir:
+        os.makedirs(experiment_dir, exist_ok=True)
+        log_path = os.path.join(experiment_dir, 'training_log.csv')
+        log_file = open(log_path, 'w', encoding='utf-8')
+        log_file.write("Episode,Agent1Reward,Agent2Reward,Agent1AvgR,Agent2AvgR,Agent1Wins,Agent2Wins,Steps,BufSize,Loss1,Loss2\n")
+
+        # Hyperparameters
+        hyper_path = os.path.join(experiment_dir, 'hyperparameters.txt')
+        with open(hyper_path, 'w', encoding='utf-8') as hf:
+            hf.write(f"algorithm: deep_nash_q\n")
+            hf.write(f"width: {width}\nheight: {height}\n")
+            hf.write(f"num_episodes: {num_episodes}\n")
+            hf.write(f"save_interval: {save_interval}\n")
+            hf.write(f"learning_rate: {learning_rate}\n")
+            hf.write(f"discount_factor: {discount_factor}\n")
+            hf.write(f"batch_size: {batch_size}\nbuffer_capacity: {buffer_capacity}\nhidden_size: {hidden_size}\n")
+
+        checkpoints_dir = os.path.join(experiment_dir, 'checkpoints')
+        os.makedirs(checkpoints_dir, exist_ok=True)
+        best_model_path = os.path.join(experiment_dir, 'best_model.pth')
+        final_model_path = os.path.join(experiment_dir, 'final_model.pth')
+        plot_path = os.path.join(experiment_dir, 'training_plot.png')
     
     print(f"\nTraining Deep Nash Q-Learning agents for {num_episodes} episodes")
     print(f"Game size: {width}x{height}")
@@ -480,6 +509,7 @@ def train_deep_nash_q_learning(width=15, height=15, num_episodes=5000,
     print(f"Hidden size: {hidden_size}")
     print("="*70)
     
+    best_score = -float('inf')
     for episode in range(num_episodes):
         state1, state2 = env.reset()
         
@@ -548,14 +578,105 @@ def train_deep_nash_q_learning(width=15, height=15, num_episodes=5000,
                   f"Win%={win_rate2:5.1f} Loss={avg_loss2:6.3f} | "
                   f"Steps={steps:3d} ε={agent1.epsilon:.3f} Buf={len(agent1.memory):5d}")
         
+        # Log to CSV if requested
+        if log_file:
+            log_file.write(f"{episode},{episode_reward1},{episode_reward2},{avg_reward1:.3f},{avg_reward2:.3f},{agent1.win_count},{agent2.win_count},{steps},{len(agent1.memory) if hasattr(agent1, 'memory') else 0},{avg_loss1:.5f},{avg_loss2:.5f}\n")
+            log_file.flush()
+
         # Save models periodically
         if episode % save_interval == 0 and episode > 0:
             agent1.save(f"{model_dir}/agent1_deep_nash.pth")
             agent2.save(f"{model_dir}/agent2_deep_nash.pth")
+
+            if checkpoints_dir:
+                cp1 = os.path.join(checkpoints_dir, f'agent1_episode_{episode}.pth')
+                cp2 = os.path.join(checkpoints_dir, f'agent2_episode_{episode}.pth')
+                agent1.save(cp1)
+                agent2.save(cp2)
+
+        # Update best model based on top score seen this episode
+        max_episode_score = max(info.get('snake1_score', 0), info.get('snake2_score', 0))
+        if max_episode_score > best_score:
+            best_score = max_episode_score
+            if best_model_path:
+                agent1.save(best_model_path.replace('.pth', '_agent1.pth'))
+                agent2.save(best_model_path.replace('.pth', '_agent2.pth'))
+        # Update training plot
+        try:
+            if plot_path and episode % max(1, save_interval//1) == 0:
+                plt.figure(figsize=(12, 6))
+                # rewards
+                plt.subplot(1, 2, 1)
+                plt.plot(agent1.total_rewards, label='Agent1 Reward')
+                plt.plot(agent2.total_rewards, label='Agent2 Reward')
+                if len(agent1.total_rewards) > 100:
+                    ma1 = np.convolve(agent1.total_rewards, np.ones(100)/100, mode='valid')
+                    plt.plot(range(99, 99+len(ma1)), ma1, 'k--', label='A1 MA(100)')
+                if len(agent2.total_rewards) > 100:
+                    ma2 = np.convolve(agent2.total_rewards, np.ones(100)/100, mode='valid')
+                    plt.plot(range(99, 99+len(ma2)), ma2, 'r--', label='A2 MA(100)')
+                plt.xlabel('Episode')
+                plt.ylabel('Reward')
+                plt.legend()
+
+                # losses / buffer
+                plt.subplot(1, 2, 2)
+                if len(agent1.losses) > 0:
+                    plt.plot(agent1.losses, label='Agent1 Loss')
+                if len(agent2.losses) > 0:
+                    plt.plot(agent2.losses, label='Agent2 Loss')
+                plt.xlabel('Update')
+                plt.ylabel('Loss')
+                plt.legend()
+
+                plt.suptitle('Deep Nash Q Training')
+                plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+                plt.savefig(plot_path, dpi=150)
+                plt.close()
+        except Exception:
+            pass
     
     # Final save
     agent1.save(f"{model_dir}/agent1_deep_nash.pth")
     agent2.save(f"{model_dir}/agent2_deep_nash.pth")
+    if final_model_path:
+        agent1.save(final_model_path.replace('.pth', '_agent1.pth'))
+        agent2.save(final_model_path.replace('.pth', '_agent2.pth'))
+
+    if log_file:
+        log_file.close()
+    # Final plot
+    try:
+        if experiment_dir:
+            plt.figure(figsize=(12, 6))
+            plt.subplot(1, 2, 1)
+            plt.plot(agent1.total_rewards, label='Agent1 Reward')
+            plt.plot(agent2.total_rewards, label='Agent2 Reward')
+            if len(agent1.total_rewards) > 100:
+                ma1 = np.convolve(agent1.total_rewards, np.ones(100)/100, mode='valid')
+                plt.plot(range(99, 99+len(ma1)), ma1, 'k--', label='A1 MA(100)')
+            if len(agent2.total_rewards) > 100:
+                ma2 = np.convolve(agent2.total_rewards, np.ones(100)/100, mode='valid')
+                plt.plot(range(99, 99+len(ma2)), ma2, 'r--', label='A2 MA(100)')
+            plt.xlabel('Episode')
+            plt.ylabel('Reward')
+            plt.legend()
+
+            plt.subplot(1, 2, 2)
+            if len(agent1.losses) > 0:
+                plt.plot(agent1.losses, label='Agent1 Loss')
+            if len(agent2.losses) > 0:
+                plt.plot(agent2.losses, label='Agent2 Loss')
+            plt.xlabel('Update')
+            plt.ylabel('Loss')
+            plt.legend()
+
+            plt.suptitle('Deep Nash Q Training - Final')
+            plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+            plt.savefig(plot_path.replace('.png', '_final.png'), dpi=150)
+            plt.close()
+    except Exception:
+        pass
     
     print("\n" + "="*70)
     print("Training completed!")

@@ -142,6 +142,8 @@ def main():
                        help='Directory to save/load models (default: models)')
     parser.add_argument('--save-interval', type=int, default=500,
                        help='Save models every N episodes (default: 500)')
+    parser.add_argument('--experiment-dir', type=str, default=None,
+                       help='Directory to store experiment logs, checkpoints and plots')
     
     args = parser.parse_args()
     
@@ -170,7 +172,8 @@ def main():
             save_interval=args.save_interval,
             model_dir=args.model_dir,
             learning_rate=args.lr,
-            discount_factor=args.gamma
+            discount_factor=args.gamma,
+            experiment_dir=args.experiment_dir
         )
     
     if args.test:
