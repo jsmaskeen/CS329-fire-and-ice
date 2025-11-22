@@ -1,10 +1,10 @@
 # Run all experiments for competitive algorithms sequentially
-# Usage: .\run_all_experiments.ps1 [-Episodes <int>] [-TestEpisodes <int>]
+# Usage: .\run_all_experiments.ps1 [-Episodes <int>] [-TestEpisodes <int>] [-SaveInterval <int>]
 
 param (
     [int]$Episodes = 3000,
-    [int]$TestEpisodes = 100.
-    [int]$SaveInterval = 20
+    [int]$TestEpisodes = 100,
+    [int]$SaveInterval = 20.
 )
 
 $algos = @(

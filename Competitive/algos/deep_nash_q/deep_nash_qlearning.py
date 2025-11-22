@@ -532,7 +532,7 @@ def train_deep_nash_q_learning(width=15, height=15, num_episodes=5000,
             agent2.draw_count += 1
         
         # Print progress
-        if episode % 50 == 0:
+        if episode % 20 == 0:
             avg_reward1 = np.mean(agent1.total_rewards[-100:]) if len(agent1.total_rewards) >= 100 else np.mean(agent1.total_rewards)
             avg_reward2 = np.mean(agent2.total_rewards[-100:]) if len(agent2.total_rewards) >= 100 else np.mean(agent2.total_rewards)
             avg_loss1 = np.mean(agent1.losses[-100:]) if len(agent1.losses) >= 100 else 0

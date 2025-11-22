@@ -29,7 +29,7 @@ To run training and evaluation for all algorithms sequentially, use the `run_all
 .\run_all_experiments.ps1
 
 # Run with custom episodes
-.\run_all_experiments.ps1 -Episodes 5000 -TestEpisodes 200
+.\run_all_experiments.ps1 -Episodes 5000 -TestEpisodes 200 -SaveInterval 50
 ```
 
 ### Individual Training and Testing
