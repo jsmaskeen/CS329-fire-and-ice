@@ -1,0 +1,155 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{subcaption}
+\usepackage{float}
+
+% Page margins
+\geometry{margin=1in}
+
+\title{\textbf{Multi-Agent Reinforcement Learning in 2 Snake:\\
+Competitive and Cooperative Approaches}}
+\author{CS329 RL Project}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This project implements and evaluates various Multi-Agent Reinforcement Learning (MARL) algorithms in a grid-based Snake environment. We explore two distinct modes: a \textbf{Competitive} zero-sum scenario using Nash Q-Learning and Deep Nash Q-Learning, and a \textbf{Cooperative} scenario utilizing DQN, Double DQN (DDQN), SARSA, Monte Carlo, and Tabular Q-Learning. We analyze the stability, convergence, and win/survival rates of these agents. Results indicate that Deep Nash Q-Learning successfully approximates equilibrium strategies in high-dimensional state spaces, while DDQN provides the most stable performance in the cooperative setting with an average evaluation score of 12.89.
+\end{abstract}
+
+\section{Introduction}
+Reinforcement Learning (RL) in multi-agent environments presents unique challenges, particularly the non-stationarity of the environment as agents update their policies simultaneously. This project applies RL to a two-player Snake game. The project is divided into two domains:
+\begin{enumerate}
+    \item \textbf{Competitive:} Agents compete for food where one agent's gain is the other's loss.
+    \item \textbf{Cooperative:} Agents attempt to survive and maximize score within the same grid, navigating around each other.
+\end{enumerate}
+
+\section{Environment and Problem Formulation}
+
+\subsection{State Space}
+The environment represents the game state differently for the two modes to optimize learning:
+\begin{itemize}
+    \item \textbf{Competitive Mode:} A feature vector of size 18. It includes danger detection (straight, left, right), current direction, relative food direction, relative opponent head direction, and a length comparison flag.
+    \item \textbf{Cooperative Mode:} A feature vector of size 22. It includes expanded danger detection that accounts for the specific location of the other agent's body segments to prevent collisions.
+\end{itemize}
+
+\subsection{Action Space}
+The agents operate in a discrete action space $A = \{0, 1, 2\}$, representing relative direction changes:
+\begin{itemize}
+    \item 0: Continue Straight
+    \item 1: Turn Left
+    \item 2: Turn Right
+\end{itemize}
+In the Deep Nash implementations, the network outputs joint action values ($3 \times 3 = 9$ pairs) to compute the equilibrium.
+
+\subsection{Reward Structure}
+\begin{itemize}
+    \item \textbf{Food Reward:} +10 for eating.
+    \item \textbf{Death Penalty:} -10 for collision with walls, self, or opponent.
+    \item \textbf{Survival:} Small negative reward (-0.1) or 0 to encourage active food seeking.
+    \item \textbf{Opponent Death (Competitive):} +5 bonus if the opponent dies.
+\end{itemize}
+
+\section{Methodology}
+
+\subsection{Competitive Algorithms}
+\subsubsection{Nash Q-Learning}
+We extended tabular Q-learning to a general-sum game. At each step, instead of maximizing individual Q-values, the agent solves a Linear Programming (LP) problem to find the Nash Equilibrium of the stage game defined by the joint Q-values $Q(s, a^1, a^2)$. The `scipy.optimize.linprog` library is used to solve for the maxmin strategy.
+
+\subsubsection{Deep Nash Q-Learning}
+To handle the continuous nature of the game flow and larger effective state spaces, we implemented a Deep Neural Network (DNN) to approximate the Q-values.
+\begin{itemize}
+    \item \textbf{Architecture:} Fully connected layers (Input $\to$ 128 $\to$ 128 $\to$ 9).
+    \item \textbf{Training:} A replay buffer of capacity 50,000 is used. The target value is calculated based on the Nash value of the next state's Q-matrix.
+\end{itemize}
+
+\subsection{Cooperative/Single-Agent Algorithms}
+We benchmarked several standard algorithms:
+\begin{itemize}
+    \item \textbf{Tabular Methods:} SARSA (On-Policy), Q-Learning (Off-Policy), and First-Visit Monte Carlo.
+    \item \textbf{Deep Q-Network (DQN):} Uses an MLP (256 hidden units) with an Experience Replay buffer.
+    \item \textbf{Double DQN (DDQN):} Decouples action selection from evaluation to reduce maximization bias.
+\end{itemize}
+
+\section{Experiments and Results}
+
+\subsection{Hyperparameters}
+Table \ref{tab:hyperparams} summarizes the configuration used during the final training runs.
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{lcc}
+    \toprule
+    Parameter & Competitive (Deep Nash) & Cooperative (DQN/DDQN) \\
+    \midrule
+    Episodes & 3,000 - 5,000 & 20,000 \\
+    Learning Rate ($\alpha$) & 0.001 & 0.001 \\
+    Discount ($\gamma$) & 0.95 & 0.99 \\
+    Batch Size & 64 & 64 \\
+    Buffer Size & 50,000 & 20,000 \\
+    Epsilon Decay & 0.995 & 0.995 \\
+    Hidden Layers & 128 & 256 \\
+    \bottomrule
+    \end{tabular}
+    \caption{Hyperparameters for Deep Learning models.}
+    \label{tab:hyperparams}
+\end{table}
+
+\subsection{Competitive Analysis}
+Training logs for Nash Q-Learning and Deep Nash Q-Learning indicate a high prevalence of "Draws".
+\begin{itemize}
+    \item \textbf{Deep Nash Q Results (200 episodes):}
+    \begin{itemize}
+        \item Agent 1 Wins: 5.0\%
+        \item Agent 2 Wins: 10.0\%
+        \item Draws: 85.0\%
+    \end{itemize}
+    \item \textbf{Tabular Nash Q Results:}
+    \begin{itemize}
+        \item Agent 1 Wins: 5.0\%
+        \item Agent 2 Wins: 15.0\%
+        \item Draws: 80.0\%
+    \end{itemize}
+\end{itemize}
+The high draw rate suggests the Nash equilibrium strategy in this specific environment tends towards conservative survival rather than aggressive killing, likely due to the high penalty for mutual death.
+
+\subsection{Cooperative Analysis}
+The Deep Learning approaches significantly outperformed tabular methods due to the state space complexity.
+\begin{itemize}
+    \item \textbf{DQN Performance:} Achieved an average score of 15.89 with a maximum score of 35 in evaluation.
+    \item \textbf{DDQN Performance:} Achieved an average score of 12.89 with a maximum of 37. While the average was slightly lower than DQN, training logs suggest DDQN exhibited more stable loss convergence.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    % Placeholder for image - Upload your 'training_plot.png' from the experiment folder
+    % \includegraphics[width=0.8\textwidth]{dqn_plot.png}
+    \caption{Training rewards over episodes for Cooperative DQN.}
+    \label{fig:dqn_rewards}
+\end{figure}
+
+\section{Contributions}
+
+\begin{enumerate}
+    \item Karan Gandhi: Implemented Nash Q, Deep Nash Q and Q learning algorithms
+    \item Jassi: Results and Report
+    \item Aarsh: Deep Q and double deep q and results for corporative
+    \item Abhinav: Monte Carlo and SARSA algorithm implementation.
+\end{enumerate}
+
+\section{Conclusion}
+This project demonstrated the application of MARL to Snake. In the competitive domain, Nash Q-Learning successfully identified safe strategies, resulting in prolonged survival (draws) rather than quick eliminations. In the cooperative domain, Deep Q-Learning methods proved robust, with DQN and DDQN agents learning to navigate the grid and consume food effectively while avoiding dynamic obstacles (the other agent).
+
+Future work could involve implementing Minimax-Q for strictly zero-sum scenarios or adding communication channels between cooperative agents to improve collision avoidance in tighter grid spaces.
+
+\end{document}
