@@ -130,21 +130,64 @@ The Deep Learning approaches significantly outperformed tabular methods due to t
     \item \textbf{DDQN Performance:} Achieved an average score of 12.89 with a maximum of 37. While the average was slightly lower than DQN, training logs suggest DDQN exhibited more stable loss convergence.
 \end{itemize}
 
+\section{Supporting Figures}
+
 \begin{figure}[H]
     \centering
-    % Placeholder for image - Upload your 'training_plot.png' from the experiment folder
-    % \includegraphics[width=0.8\textwidth]{dqn_plot.png}
-    \caption{Training rewards over episodes for Cooperative DQN.}
-    \label{fig:dqn_rewards}
+    \includegraphics[width=0.8\textwidth]{figures/deep_nash_training_plot_final.png}
+    \caption{Deep Nash Q-Learning (Final loss (Avg.): \textbf{0.291})}
+    \label{fig:deep_nash_loss}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/nash_q_training_plot_final.png}
+    \caption{Tabular Nash Q-Learning}
+    \label{fig:nash_loss}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/dqn_training_plot_final.png}
+    \caption{Cooperative DQN}
+    \label{fig:dqn_loss}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/ddqn_training_plot_final.png}
+    \caption{Cooperative DDQN}
+    \label{fig:ddqn_loss}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/qlearning_training_plot_final.png}
+    \caption{Tabular Q-Learning}
+    \label{fig:q_loss}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/sarsa_training_plot_final.png}
+    \caption{SARSA (On-Policy)}
+    \label{fig:sarsa_loss}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/monte_carlo_training_plot.png}
+    \caption{Monte Carlo (On-Policy)}
+    \label{fig:mc_loss}
 \end{figure}
 
 \section{Contributions}
 
 \begin{enumerate}
     \item Karan Gandhi: Implemented Nash Q, Deep Nash Q and Q learning algorithms
-    \item Jassi: Results and Report
-    \item Aarsh: Deep Q and double deep q and results for corporative
-    \item Abhinav: Monte Carlo and SARSA algorithm implementation.
+    \item Jaskirat Singh Maskeen: Training Models, Competitive results, Organising the cluttered repository, and Report.
+    \item Aarsh Wankar: Deep Q and double deep q and results for corporative.
+    \item Abhinav Khot: Monte Carlo and SARSA algorithm implementation.
 \end{enumerate}
 
 \section{Conclusion}
