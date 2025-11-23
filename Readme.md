@@ -102,30 +102,3 @@ python Corporative\Algos\DDQLearning\train_ddqn.py --train --episodes 15000
 ```
 
 This runs a short training/testing cycle and demonstrates saved models and evaluation summaries.
-
-**Development & Adding New Algorithms**
-- Add a new algorithm folder under `Competitive/Algos/` or `Corporative/Algos/`.
-- Provide `agent.py` (agent implementation), `train.py` (training entry point), `eval.py` and `demo.py` where appropriate.
-- Follow the existing code patterns for model saving, checkpointing, and logging so `run_all_experiments.ps1` can be extended.
-
-**Troubleshooting**
-- If PyTorch can't find CUDA, either install the appropriate CUDA-enabled wheel or run on CPU by forcing `device='cpu'` in scripts.
-- Rendering issues: ensure `pygame` is installed and that your display environment allows windows (on headless servers use headless rendering/workarounds).
-
-**Contributing**
-- Open an issue to discuss significant changes.
-- Submit pull requests with tests or example runs when adding algorithms.
-
-**Acknowledgements & References**
-- This project builds on standard RL algorithms (Q-Learning, DQN variants) and extends Nash-Q concepts to a 2-player snake environment.
-
-**Contact**
-- For questions about the codebase, open an issue or contact the repository owner.
-
----
-
-Files you may want to open next:
-- `Competitive/README.md` — Competitive-specific usage and sample logs.
-- `Competitive/Algos/deep_nash_q/train_deep.py` — Deep Nash Q training script.
-- `Corporative/Algos/DDQLearning/train_ddqn.py` — Example cooperative training script.
-
