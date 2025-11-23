@@ -38,6 +38,7 @@ If you use `cmd.exe` the commands are the same (run them in `cmd` or PowerShell)
 cd Competitive
 .\run_all_experiments.ps1 -Episodes 3000 -TestEpisodes 100 -SaveInterval 100
 ```
+A similar shell script is present for Co-operative too.
 
 2) Train / Test Competitive Nash Q (tabular):
 
@@ -65,9 +66,10 @@ python render_deep.py
 
 5) Cooperative / single-agent algorithms (examples):
 
+For demo and eval:
 ```cmd
 python Corporative\Algos\DQLearning\demo_dqn.py 
-python Corporative\Algos\DDQLearning\demo_ddqn.py 
+python Corporative\Algos\DDQLearning\eval_ddqn.py --model_path=model_path
 ```
 
 **Model files and checkpoints**
