@@ -28,7 +28,7 @@ This project implements and evaluates various Multi-Agent Reinforcement Learning
 \end{abstract}
 
 \section{Introduction}
-Reinforcement Learning (RL) in multi-agent environments presents unique challenges, particularly the non-stationarity of the environment as agents update their policies simultaneously. This project applies RL to a two-player Snake game. The project is divided into two domains:
+Reinforcement Learning (RL) \cite{sutton1998reinforcement} in multi-agent environments presents unique challenges, particularly the non-stationarity of the environment as agents update their policies simultaneously. This project applies RL to a two-player Snake game. The project is divided into two domains:
 \begin{enumerate}
     \item \textbf{Competitive:} Agents compete for food where one agent's gain is the other's loss.
     \item \textbf{Cooperative:} Agents attempt to survive and maximize score within the same grid, navigating around each other.
@@ -64,10 +64,10 @@ In the Deep Nash implementations, the network outputs joint action values ($3 \t
 
 \subsection{Competitive Algorithms}
 \subsubsection{Nash Q-Learning}
-We extended tabular Q-learning to a general-sum game. At each step, instead of maximizing individual Q-values, the agent solves a Linear Programming (LP) problem to find the Nash Equilibrium of the stage game defined by the joint Q-values $Q(s, a^1, a^2)$. The `scipy.optimize.linprog` library is used to solve for the maxmin strategy.
+We extended tabular Q-learning \cite{watkins1992q} to a general-sum game, following the Nash Q-Learning framework established by Hu and Wellman \cite{hu2003nash}. At each step, instead of maximizing individual Q-values, the agent solves a Linear Programming (LP) problem to find the Nash Equilibrium of the stage game defined by the joint Q-values $Q(s, a^1, a^2)$. The `scipy.optimize.linprog` library is used to solve for the maxmin strategy.
 
 \subsubsection{Deep Nash Q-Learning}
-To handle the continuous nature of the game flow and larger effective state spaces, we implemented a Deep Neural Network (DNN) to approximate the Q-values.
+To handle the continuous nature of the game flow and larger effective state spaces, we implemented a Deep Neural Network (DNN) to approximate the Q-values, leveraging the architecture of Deep Q-Networks \cite{mnih2015human} adapted for multi-agent equilibrium computation.
 \begin{itemize}
     \item \textbf{Architecture:} Fully connected layers (Input $\to$ 128 $\to$ 128 $\to$ 9).
     \item \textbf{Training:} A replay buffer of capacity 50,000 is used. The target value is calculated based on the Nash value of the next state's Q-matrix.
@@ -77,15 +77,15 @@ To handle the continuous nature of the game flow and larger effective state spac
 We benchmarked several standard algorithms, each tailored to address specific challenges in cooperative multi-agent reinforcement learning:
 
 \begin{itemize}
-    \item \textbf{SARSA (On-Policy):} This tabular method updates the Q-value based on the current action and the next action taken by the agent. It is on-policy, meaning it evaluates and improves the policy that is used to make decisions. SARSA is suitable for environments where the agent needs to learn from its current behavior.
+    \item \textbf{SARSA (On-Policy):} Proposed by Rummery and Niranjan \cite{rummery1994line}, this tabular method updates the Q-value based on the current action and the next action taken by the agent. It is on-policy, meaning it evaluates and improves the policy that is used to make decisions. SARSA is suitable for environments where the agent needs to learn from its current behavior.
 
-    \item \textbf{Q-Learning (Off-Policy):} Unlike SARSA, Q-Learning is off-policy and updates the Q-value based on the maximum possible reward from the next state, regardless of the agent's actual next action. This makes it more exploratory and often faster to converge in deterministic environments.
+    \item \textbf{Q-Learning (Off-Policy):} Introduced by Watkins and Dayan \cite{watkins1992q}, Q-Learning is off-policy and updates the Q-value based on the maximum possible reward from the next state, regardless of the agent's actual next action. This makes it more exploratory and often faster to converge in deterministic environments.
 
     \item \textbf{First-Visit Monte Carlo:} This method estimates the value of a state-action pair by averaging the returns of the first visit to that pair in an episode. It is particularly useful in episodic tasks where the agent can learn from complete trajectories.
 
-    \item \textbf{Deep Q-Network (DQN):} Extends Q-Learning by using a neural network to approximate the Q-values, enabling it to handle high-dimensional state spaces. DQN employs experience replay and a target network to stabilize training.
+    \item \textbf{Deep Q-Network (DQN):} Mnih et al. \cite{mnih2015human} extended Q-Learning by using a neural network to approximate the Q-values, enabling it to handle high-dimensional state spaces. DQN employs experience replay and a target network to stabilize training.
 
-    \item \textbf{Double DQN (DDQN):} An improvement over DQN, DDQN decouples the action selection from the Q-value evaluation to reduce overestimation bias. This results in more stable and reliable learning, especially in environments with noisy rewards.
+    \item \textbf{Double DQN (DDQN):} Proposed by Van Hasselt et al. \cite{van2016deep} as an improvement over DQN, DDQN decouples the action selection from the Q-value evaluation to reduce overestimation bias. This results in more stable and reliable learning, especially in environments with noisy rewards.
 \end{itemize}
 
 \section{Experiments and Results}
@@ -239,5 +239,39 @@ Table \ref{tab:eval_results} summarizes the evaluation results for all models, i
 This project demonstrated the application of MARL to Snake. In the competitive domain, Nash Q-Learning successfully identified safe strategies, resulting in prolonged survival (draws) rather than quick eliminations. In the cooperative domain, Deep Q-Learning methods proved robust, with DQN and DDQN agents learning to navigate the grid and consume food effectively while avoiding dynamic obstacles (the other agent).
 
 Future work could involve implementing Minimax-Q for strictly zero-sum scenarios or adding communication channels between cooperative agents to improve collision avoidance in tighter grid spaces.
+
+\begin{thebibliography}{9}
+
+\bibitem{sutton1998reinforcement}
+Sutton, R. S., \& Barto, A. G. (2018).
+\textit{Reinforcement Learning: An Introduction}.
+MIT press.
+
+\bibitem{watkins1992q}
+Watkins, C. J., \& Dayan, P. (1992).
+Q-learning.
+\textit{Machine learning}, 8(3), 279-292.
+
+\bibitem{hu2003nash}
+Hu, J., \& Wellman, M. P. (2003).
+Nash Q-learning for general-sum stochastic games.
+\textit{Journal of Machine Learning Research}, 4(Nov), 1039-1069.
+
+\bibitem{mnih2015human}
+Mnih, V., Kavukcuoglu, K., Silver, D., et al. (2015).
+Human-level control through deep reinforcement learning.
+\textit{Nature}, 518(7540), 529-533.
+
+\bibitem{van2016deep}
+Van Hasselt, H., Guez, A., \& Silver, D. (2016).
+Deep reinforcement learning with double q-learning.
+\textit{Proceedings of the AAAI conference on artificial intelligence}, 30(1).
+
+\bibitem{rummery1994line}
+Rummery, G. A., \& Niranjan, M. (1994).
+On-line Q-learning using connectionist systems.
+\textit{University of Cambridge, Department of Engineering}.
+
+\end{thebibliography}
 
 \end{document}
