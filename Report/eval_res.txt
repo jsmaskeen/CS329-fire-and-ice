@@ -1,0 +1,95 @@
+deepnashq
+
+============================================================
+DEEP NASH Q-LEARNING TEST RESULTS
+============================================================
+Agent 1 Wins: 3 (3.0%)
+Agent 2 Wins: 0 (0.0%)
+Draws: 97 (97.0%)
+
+Agent 1 Avg Score: 0.03 \pm 0.17
+Agent 2 Avg Score: 0.00 \pm 0.00
+
+Average Episode Length: 655.0 \pm 113.6
+============================================================
+
+-----
+
+nash_q
+
+============================================================
+TEST RESULTS SUMMARY
+============================================================
+Agent 1 Wins: 15 (15.0%)
+Agent 2 Wins: 50 (50.0%)
+Draws: 35 (35.0%)
+
+Agent 1 Avg Score: 3.67 \pm 2.83
+Agent 2 Avg Score: 5.13 \pm 3.57
+
+Average Episode Length: 92.1 \pm 75.4
+============================================================
+
+DDQLearning
+==================================================
+Evaluation Report
+==================================================
+Model Path: C:\Users\skabh\CS329-RL\Corporative\Algos\DDQLearning\models\20251120_234554\final_model.pth
+Episodes: 100
+Board Size: 15x15
+--------------------------------------------------
+Score Mean: 12.89
+Score Std:  7.49
+Score Max:  37
+Score Min:  1
+--------------------------------------------------
+Length Mean: 130.38
+Length Std:  78.08
+==================================================
+
+
+
+DQLearning
+==================================================
+Evaluation Report
+==================================================
+Model Path: C:\Users\skabh\CS329-RL\Corporative\Algos\DQLearning\models\20251120_224640\final_model.pth
+Episodes: 100
+Board Size: 15x15
+--------------------------------------------------
+Score Mean: 15.89
+Score Std:  7.52
+Score Max:  35
+Score Min:  0
+--------------------------------------------------
+Length Mean: 164.74
+Length Std:  79.13
+==================================================
+
+MONTECARLO ON POLICY
+
+Evaluation Results for models/20251121_005533/final_model.pkl
+Episodes: 100
+Mean Score: 6.15 \pm 2.74
+Max Score: 13
+Min Score: 0
+Mean Episode Length: 77.50 \pm 37.88
+
+
+QLEARNING
+Evaluation Results for models\20251121_011759\final_model.pkl
+Episodes: 100
+Mean Score: 8.09 \pm 3.66
+Max Score: 17
+Min Score: 1
+Mean Episode Length: 135.20 \pm 77.87
+
+
+
+SARSA on POLICY
+Evaluation Results for models\20251121_010658\final_model.pkl
+Episodes: 100
+Mean Score: 1.86 \pm 1.79
+Max Score: 7
+Min Score: 0
+Mean Episode Length: 285.32 \pm 165.97

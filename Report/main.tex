@@ -74,11 +74,18 @@ To handle the continuous nature of the game flow and larger effective state spac
 \end{itemize}
 
 \subsection{Cooperative/Single-Agent Algorithms}
-We benchmarked several standard algorithms:
+We benchmarked several standard algorithms, each tailored to address specific challenges in cooperative multi-agent reinforcement learning:
+
 \begin{itemize}
-    \item \textbf{Tabular Methods:} SARSA (On-Policy), Q-Learning (Off-Policy), and First-Visit Monte Carlo.
-    \item \textbf{Deep Q-Network (DQN):} Uses an MLP (256 hidden units) with an Experience Replay buffer.
-    \item \textbf{Double DQN (DDQN):} Decouples action selection from evaluation to reduce maximization bias.
+    \item \textbf{SARSA (On-Policy):} This tabular method updates the Q-value based on the current action and the next action taken by the agent. It is on-policy, meaning it evaluates and improves the policy that is used to make decisions. SARSA is suitable for environments where the agent needs to learn from its current behavior.
+
+    \item \textbf{Q-Learning (Off-Policy):} Unlike SARSA, Q-Learning is off-policy and updates the Q-value based on the maximum possible reward from the next state, regardless of the agent's actual next action. This makes it more exploratory and often faster to converge in deterministic environments.
+
+    \item \textbf{First-Visit Monte Carlo:} This method estimates the value of a state-action pair by averaging the returns of the first visit to that pair in an episode. It is particularly useful in episodic tasks where the agent can learn from complete trajectories.
+
+    \item \textbf{Deep Q-Network (DQN):} Extends Q-Learning by using a neural network to approximate the Q-values, enabling it to handle high-dimensional state spaces. DQN employs experience replay and a target network to stabilize training.
+
+    \item \textbf{Double DQN (DDQN):} An improvement over DQN, DDQN decouples the action selection from the Q-value evaluation to reduce overestimation bias. This results in more stable and reliable learning, especially in environments with noisy rewards.
 \end{itemize}
 
 \section{Experiments and Results}
@@ -108,20 +115,20 @@ Table \ref{tab:hyperparams} summarizes the configuration used during the final t
 \subsection{Competitive Analysis}
 Training logs for Nash Q-Learning and Deep Nash Q-Learning indicate a high prevalence of "Draws".
 \begin{itemize}
-    \item \textbf{Deep Nash Q Results (200 episodes):}
+    \item \textbf{Deep Nash Q Results (100 episodes):}
     \begin{itemize}
-        \item Agent 1 Wins: 5.0\%
-        \item Agent 2 Wins: 10.0\%
-        \item Draws: 85.0\%
+        \item Agent 1 Wins: 3\%
+        \item Agent 2 Wins: 97\%
+        \item Draws: 97.0\%
     \end{itemize}
-    \item \textbf{Tabular Nash Q Results:}
+    \item \textbf{Tabular Nash Q Results  (100 episodes):}
     \begin{itemize}
-        \item Agent 1 Wins: 5.0\%
-        \item Agent 2 Wins: 15.0\%
-        \item Draws: 80.0\%
+        \item Agent 1 Wins: 15.0\%
+        \item Agent 2 Wins: 50.0\%
+        \item Draws: 35.0\%
     \end{itemize}
 \end{itemize}
-The high draw rate suggests the Nash equilibrium strategy in this specific environment tends towards conservative survival rather than aggressive killing, likely due to the high penalty for mutual death.
+The high draw rate suggests the Deep Nash Q strategy in this specific environment tends towards conservative survival rather than aggressive killing, likely due to the high penalty for mutual death. The lower draw rate in Nash Q stratergy could be due to the fact that the tabular method learns exact state-action values and therefore converges more cleanly to decisive, exploitative strategies, whereas deep Nash Q generalizes conservatively and over-penalizes risky aggression. The tabular agents thus more readily identify profitable attack opportunities and engage in high-stakes interactions during training, resulting in both wins and losses, whereas the deep agents drift towards mutually safe, non-engaging behavior that prioritizes survival and thus produces disproportionately many draws.
 
 \subsection{Cooperative Analysis}
 The Deep Learning approaches significantly outperformed tabular methods due to the state space complexity.
@@ -129,6 +136,44 @@ The Deep Learning approaches significantly outperformed tabular methods due to t
     \item \textbf{DQN Performance:} Achieved an average score of 15.89 with a maximum score of 35 in evaluation.
     \item \textbf{DDQN Performance:} Achieved an average score of 12.89 with a maximum of 37. While the average was slightly lower than DQN, training logs suggest DDQN exhibited more stable loss convergence.
 \end{itemize}
+
+\subsection{Comparative Analysis}
+
+The competitive and cooperative approaches in this project highlight distinct challenges and outcomes in multi-agent reinforcement learning:
+
+\begin{itemize}
+    \item \textbf{Objectives:} Competitive algorithms aim to maximize individual rewards in a zero-sum setting, often leading to conservative strategies to avoid mutual losses. Cooperative algorithms, on the other hand, focus on maximizing collective rewards, requiring agents to balance individual gains with team objectives.
+
+    \item \textbf{Challenges:} Competitive algorithms, particularly Nash Q-Learning, face computational challenges in solving Nash equilibria at each state, which can be prohibitive in real-time scenarios. Cooperative algorithms, especially deep learning-based methods like DQN and DDQN, struggle with stability and convergence in high-dimensional state spaces but benefit from experience replay and target networks.
+
+    \item \textbf{Outcomes:} Competitive strategies often result in high draw rates, reflecting a tendency towards survival rather than aggressive play. Cooperative strategies, particularly DDQN, demonstrate robust performance with higher average scores and more stable training dynamics.
+
+    \item \textbf{Scalability:} Deep learning-based approaches in both domains show better scalability to larger state spaces compared to tabular methods, making them more suitable for complex environments.
+\end{itemize}
+
+
+\subsection{Evaluation Results}
+
+Table \ref{tab:eval_results} summarizes the evaluation results for all models, including both competitive and cooperative algorithms. Metrics such as average score, maximum score, and average episode length are reported.
+
+\begin{table}[H]
+    \centering
+    \begin{tabular}{lcccc}
+    \toprule
+    \textbf{Algorithm} & \textbf{Avg. Score} & \textbf{Max Score} & \textbf{Min Score} & \textbf{Avg. Episode Length} \\
+    \midrule
+    Deep Nash Q-Learning & $0.03 \pm 0.17$ & 0 & 0 & $655.0 \pm 113.6$ \\
+    Nash Q-Learning & $3.67 \pm 2.83$ & 15 & 0 & $92.1 \pm 75.4$ \\
+    Double DQN (DDQN) & $12.89 \pm 7.49$ & 37 & 1 & $130.38 \pm 78.08$ \\
+    DQN & $15.89 \pm 7.52$ & 35 & 0 & $164.74 \pm 79.13$ \\
+    Monte Carlo (On-Policy) & $6.15 \pm 2.74$ & 13 & 0 & $77.50 \pm 37.88$ \\
+    Q-Learning & $8.09 \pm 3.66$ & 17 & 1 & $135.20 \pm 77.87$ \\
+    SARSA (On-Policy) & $1.86 \pm 1.79$ & 7 & 0 & $285.32 \pm 165.97$ \\
+    \bottomrule
+    \end{tabular}
+    \caption{Evaluation results for all models. Metrics include average score, maximum score, minimum score, and average episode length.}
+    \label{tab:eval_results}
+\end{table}
 
 \section{Supporting Figures}
 

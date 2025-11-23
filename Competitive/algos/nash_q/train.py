@@ -32,10 +32,10 @@ def test_agents(model_dir='models', width=15, height=15, num_episodes=100):
     agent1 = NashQLearningAgent(agent_id=1)
     agent2 = NashQLearningAgent(agent_id=2)
     
-    if not agent1.load(f"{model_dir}/agent1_nash.pkl"):
+    if not agent1.load(f"{model_dir}/agent1_nash.pth"):
         print("Error: Agent 1 model not found!")
         return
-    if not agent2.load(f"{model_dir}/agent2_nash.pkl"):
+    if not agent2.load(f"{model_dir}/agent2_nash.pth"):
         print("Error: Agent 2 model not found!")
         return
     
