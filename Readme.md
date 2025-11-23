@@ -76,7 +76,7 @@ python Corporative\Algos\DDQLearning\eval_ddqn.py --model_path=model_path
 - Deep model checkpoints: `Competitive/Algos/deep_nash_q/models/` (file names like `agent1_deep_nash.pth`).
 - Tabular models: `Competitive/Algos/nash_q/models/` (pickled Q-tables, e.g., `agent1_nash.pkl`).
 - Cooperative models: `Corporative/Algos/*/models/<timestamp>/`
-- Experiment logs and saved checkpoints are under each `experiments/` subfolder for reproducibility.
+- Experiment logs and saved checkpoints are under each `models/` subfolder for reproducibility.
 
 **What each folder contains**
 - `Competitive/Algos/deep_nash_q/`:
