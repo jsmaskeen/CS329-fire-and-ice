@@ -1,5 +1,10 @@
 **Competitive & Cooperative Snake RL**
 
+![ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/9496637c-42d4-4ca0-a996-946f846a715c)
+(Cooperative setting - DDQN trained)
+
+
+
 This repository contains implementations and training scripts for multi-agent reinforcement learning applied to a 2-player snake game. It includes competitive algorithms (Nash and Deep Nash Q-Learning) and cooperative/single-agent algorithms (DQN, DDQN, Q-Learning, SARSA, Monte Carlo).
 
 **Quick Summary**:
