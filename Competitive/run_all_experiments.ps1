@@ -8,8 +8,8 @@ param (
 )
 
 $algos = @(
-    @{ Name = "deep_nash_q"; TrainScript = "train_deep.py" },
-    @{ Name = "nash_q"; TrainScript = "train.py" }
+    @{ Name = "nash_q"; TrainScript = "train.py" },
+    @{ Name = "deep_nash_q"; TrainScript = "train_deep.py" }
 )
 
 $baseDir = Get-Location

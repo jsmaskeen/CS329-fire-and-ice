@@ -6,6 +6,7 @@ Training script for Nash Q-Learning on Competitive Snake Game
 import sys
 import os
 import argparse
+from datetime import datetime
 
 # Add parent directories to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
@@ -142,7 +143,7 @@ def main():
                        help='Directory to save/load models (default: models)')
     parser.add_argument('--save-interval', type=int, default=500,
                        help='Save models every N episodes (default: 500)')
-    parser.add_argument('--experiment-dir', type=str, default=None,
+    parser.add_argument('--experiment-dir', type=str, default=f'../../experiments/nash_q_{datetime.now().strftime("%Y%m%d_%H%M%S")}',
                        help='Directory to store experiment logs, checkpoints and plots')
     
     args = parser.parse_args()

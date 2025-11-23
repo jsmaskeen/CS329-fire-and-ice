@@ -1,0 +1,7 @@
+algorithm: nash_q
+width: 15
+height: 15
+num_episodes: 15000
+save_interval: 200
+learning_rate: 0.1
+discount_factor: 0.95

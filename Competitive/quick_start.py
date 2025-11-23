@@ -126,9 +126,9 @@ Examples:
         
         try:
             if args.deep:
-                from Algos.deep_nash_q.render_deep import run_demo
+                from Competitive.Algos.deep_nash_q.demo_deep_nash_q import run_demo
             else:
-                from Algos.nash_q.render import run_demo
+                from Competitive.Algos.nash_q.demo_nash_q import run_demo
                 
             run_demo(
                 model_dir='models',

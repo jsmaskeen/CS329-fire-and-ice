@@ -40,7 +40,7 @@ You can also run the training and testing scripts for each algorithm individuall
 
 ```bash
 # Train the agent
-python Competitive/Algos/nash_q/train.py --train --episodes 5000
+python Competitive/Algos/nash_q/train.py --train --episodes 5000 --save-interval 100
 
 # Test the trained agent
 python Competitive/Algos/nash_q/train.py --test --test-episodes 100

@@ -88,6 +88,8 @@ class NashQLearningAgent:
             return np.random.randint(0, self.action_size)
         
         strategy = self.nash_strategies[state_key]
+        strategy = np.maximum(strategy, 0)
+        strategy = strategy / strategy.sum()
         
         # Sample action according to mixed strategy
         return np.random.choice(self.action_size, p=strategy)
@@ -306,8 +308,8 @@ def train_nash_q_learning(width=15, height=15, num_episodes=10000,
     )
     
     # Try to load existing models
-    agent1.load(f"{model_dir}/agent1_nash.pkl")
-    agent2.load(f"{model_dir}/agent2_nash.pkl")
+    agent1.load(f"{model_dir}/agent1_nash.pth")
+    agent2.load(f"{model_dir}/agent2_nash.pth")
 
     # Setup experiment directory logging if requested (matches corporative structure)
     log_file = None
@@ -334,8 +336,8 @@ def train_nash_q_learning(width=15, height=15, num_episodes=10000,
         # Checkpoints dir and model paths
         checkpoints_dir = os.path.join(experiment_dir, 'checkpoints')
         os.makedirs(checkpoints_dir, exist_ok=True)
-        best_model_path = os.path.join(experiment_dir, 'best_model.pkl')
-        final_model_path = os.path.join(experiment_dir, 'final_model.pkl')
+        best_model_path = os.path.join(experiment_dir, 'best_model.pth')
+        final_model_path = os.path.join(experiment_dir, 'final_model.pth')
         # Plot path
         plot_path = os.path.join(experiment_dir, 'training_plot.png')
     
@@ -416,13 +418,13 @@ def train_nash_q_learning(width=15, height=15, num_episodes=10000,
         # Save models periodically
         if episode % save_interval == 0 and episode > 0:
             # Default model dir save
-            agent1.save(f"{model_dir}/agent1_nash.pkl")
-            agent2.save(f"{model_dir}/agent2_nash.pkl")
+            agent1.save(f"{model_dir}/agent1_nash.pth")
+            agent2.save(f"{model_dir}/agent2_nash.pth")
 
             # Also save checkpoint copies if experiment_dir provided
             if checkpoints_dir:
-                cp1 = os.path.join(checkpoints_dir, f'agent1_episode_{episode}.pkl')
-                cp2 = os.path.join(checkpoints_dir, f'agent2_episode_{episode}.pkl')
+                cp1 = os.path.join(checkpoints_dir, f'agent1_episode_{episode}.pth')
+                cp2 = os.path.join(checkpoints_dir, f'agent2_episode_{episode}.pth')
                 agent1.save(cp1)
                 agent2.save(cp2)
             # Update training plot
@@ -455,15 +457,15 @@ def train_nash_q_learning(width=15, height=15, num_episodes=10000,
             best_score = max_episode_score
             # Save best models in experiment folder
             if best_model_path:
-                agent1.save(best_model_path.replace('.pkl', '_agent1.pkl'))
-                agent2.save(best_model_path.replace('.pkl', '_agent2.pkl'))
+                agent1.save(best_model_path.replace('.pth', '_agent1.pth'))
+                agent2.save(best_model_path.replace('.pth', '_agent2.pth'))
     
     # Final save
-    agent1.save(f"{model_dir}/agent1_nash.pkl")
-    agent2.save(f"{model_dir}/agent2_nash.pkl")
+    agent1.save(f"{model_dir}/agent1_nash.pth")
+    agent2.save(f"{model_dir}/agent2_nash.pth")
     if final_model_path:
-        agent1.save(final_model_path.replace('.pkl', '_agent1.pkl'))
-        agent2.save(final_model_path.replace('.pkl', '_agent2.pkl'))
+        agent1.save(final_model_path.replace('.pth', '_agent1.pth'))
+        agent2.save(final_model_path.replace('.pth', '_agent2.pth'))
 
     if log_file:
         log_file.close()
