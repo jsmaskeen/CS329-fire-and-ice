@@ -40,6 +40,10 @@ cd Competitive
 ```
 A similar shell script is present for Co-operative too.
 
+```powershell
+cd Corporative
+.\run_all_experiments.ps1 
+```
 2) Train / Test Competitive Nash Q (tabular):
 
 ```cmd
