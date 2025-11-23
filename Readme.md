@@ -66,8 +66,8 @@ python render_deep.py
 5) Cooperative / single-agent algorithms (examples):
 
 ```cmd
-python Corporative\Algos\DQLearning\train_dqn.py --train --episodes 10000
-python Corporative\Algos\DDQLearning\train_ddqn.py --train --episodes 15000
+python Corporative\Algos\DQLearning\demo_dqn.py 
+python Corporative\Algos\DDQLearning\demo_ddqn.py 
 ```
 
 **Model files and checkpoints**
