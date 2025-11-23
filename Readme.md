@@ -3,6 +3,8 @@
 
 This repository contains implementations and training scripts for multi-agent reinforcement learning applied to a 2-player snake game. It includes competitive algorithms (Nash and Deep Nash Q-Learning) and cooperative/single-agent algorithms (DQN, DDQN, Q-Learning, SARSA, Monte Carlo).
 
+## Report: [`./Report/main.pdf`](./Report/main.pdf)
+
 ## Demo: 
 
 ### (Cooperative setting - DDQN trained)
