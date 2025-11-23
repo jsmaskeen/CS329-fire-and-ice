@@ -1,18 +1,27 @@
-**Competitive & Cooperative Snake RL**
-
-![ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/9496637c-42d4-4ca0-a996-946f846a715c)
-(Cooperative setting - DDQN trained)
-
+# **Competitive & Cooperative Snake RL**
 
 
 This repository contains implementations and training scripts for multi-agent reinforcement learning applied to a 2-player snake game. It includes competitive algorithms (Nash and Deep Nash Q-Learning) and cooperative/single-agent algorithms (DQN, DDQN, Q-Learning, SARSA, Monte Carlo).
 
-**Quick Summary**:
+## Report: [`./Report/main.pdf`](./Report/main.pdf)
+
+## Demo: 
+
+### (Cooperative setting - DDQN trained)
+
+![ezgif com-video-to-gif-converter](https://github.com/user-attachments/assets/9496637c-42d4-4ca0-a996-946f846a715c)
+
+### (Competitive - Nash Q trained)
+
+![alt text](competitive.gif)
+
+
+## **Quick Summary**:
 - **Project**: Multi-agent Snake (competitive & cooperative) using classic and deep RL.
 - **Languages**: Python 3.8+.
 - **Key libs**: PyTorch (for deep models), NumPy, Pygame (optional, for rendering).
 
-**Repository Structure**
+## **Repository Structure**
 - **`Competitive/`**: Competitive two-player environment, algorithms, training and evaluation scripts.
 	- `Algos/deep_nash_q/`: Deep Nash Q implementation, training and demos, model checkpoints.
 	- `Algos/nash_q/`: Tabular Nash Q implementation and demos.
@@ -21,12 +30,12 @@ This repository contains implementations and training scripts for multi-agent re
 - **`Game/`** (under each folder): Game environment code for the snake game.
 - **`experiments/`**: Saved experiment outputs and checkpoints (timestamps and logs).
 
-**Environment & Requirements**
+## **Environment & Requirements**
 - **Python**: 3.8 or newer recommended.
 - **GPU**: Optional (PyTorch with CUDA speeds up deep training).
 - **Suggested packages** (install via pip): `torch`, `numpy`, `pygame`, `tqdm`.
 
-Install minimal dependencies (example):
+## Install minimal dependencies (example):
 
 ```powershell
 python -m pip install --upgrade pip
@@ -35,7 +44,7 @@ python -m pip install torch numpy pygame tqdm
 
 If you use `cmd.exe` the commands are the same (run them in `cmd` or PowerShell).
 
-**High-level Usage**
+## **High-level Usage**
 
 1) Run all Competitive experiments (PowerShell):
 
@@ -81,13 +90,13 @@ python Corporative\Algos\DQLearning\demo_dqn.py
 python Corporative\Algos\DDQLearning\eval_ddqn.py --model_path=model_path
 ```
 
-**Model files and checkpoints**
+## **Model files and checkpoints**
 - Deep model checkpoints: `Competitive/Algos/deep_nash_q/models/` (file names like `agent1_deep_nash.pth`).
 - Tabular models: `Competitive/Algos/nash_q/models/` (pickled Q-tables, e.g., `agent1_nash.pkl`).
 - Cooperative models: `Corporative/Algos/*/models/<timestamp>/`
 - Experiment logs and saved checkpoints are under each `models/` subfolder for reproducibility.
 
-**What each folder contains**
+## **What each folder contains**
 - `Competitive/Algos/deep_nash_q/`:
 	- `deep_nash_q_agent.py` - agent wrapper for deep Nash Q.
 	- `deep_nash_qlearning.py` - training loop and learning logic.
@@ -100,11 +109,11 @@ python Corporative\Algos\DDQLearning\eval_ddqn.py --model_path=model_path
 	- Subfolders for `DQLearning`, `DDQLearning`, `QLearning`, `SARSA_On_Policy`, `Monte_Carlo_on_policy`.
 	- Each contains `train_*`, `eval_*`, `demo_*`, agent implementations and `models/` for saved runs.
 
-**Configuration & Hyperparameters**
+## **Configuration & Hyperparameters**
 - Many training scripts accept command-line args for: `--episodes`, `--test-episodes`, `--save-interval`, learning rates, hidden sizes, batch sizes, exploration epsilon schedules.
 - See the top of each training script (e.g., `train_deep.py`) for available flags and defaults.
 
-**Reproducing Example Results**
+## **Reproducing Example Results**
 - The `Competitive/README.md` contains sample logs and example outputs showing training and test summaries for both Deep Nash and Nash Q runs (see included attachment logs).
 - To reproduce a short test run (fast):
 

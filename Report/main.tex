@@ -14,8 +14,7 @@
 % Page margins
 \geometry{margin=1in}
 
-\title{\textbf{Multi-Agent Reinforcement Learning in 2 Snake:\\
-Competitive and Cooperative Approaches}}
+\title{\textbf{Single and Multi-Agent Reinforcement Learning in Double Snake}}
 \author{CS329 RL Project}
 \date{\today}
 
@@ -30,8 +29,8 @@ This project implements and evaluates various Multi-Agent Reinforcement Learning
 \section{Introduction}
 Reinforcement Learning (RL) \cite{sutton1998reinforcement} in multi-agent environments presents unique challenges, particularly the non-stationarity of the environment as agents update their policies simultaneously. This project applies RL to a two-player Snake game. The project is divided into two domains:
 \begin{enumerate}
-    \item \textbf{Competitive:} Agents compete for food where one agent's gain is the other's loss.
-    \item \textbf{Cooperative:} Agents attempt to survive and maximize score within the same grid, navigating around each other.
+    \item \textbf{Competitive:} Agents compete for food, where one agent's gain is the other's loss.
+    \item \textbf{Cooperative:} The Agent, controlling both the snakes, attempts to survive and maximise score within the same grid, navigating around each other.
 \end{enumerate}
 
 \section{Environment and Problem Formulation}
@@ -39,8 +38,8 @@ Reinforcement Learning (RL) \cite{sutton1998reinforcement} in multi-agent enviro
 \subsection{State Space}
 The environment represents the game state differently for the two modes to optimize learning:
 \begin{itemize}
-    \item \textbf{Competitive Mode:} A feature vector of size 18. It includes danger detection (straight, left, right), current direction, relative food direction, relative opponent head direction, and a length comparison flag.
-    \item \textbf{Cooperative Mode:} A feature vector of size 22. It includes expanded danger detection that accounts for the specific location of the other agent's body segments to prevent collisions.
+    \item \textbf{Competitive Mode:} 2 agents, each having a feature vector of size 18. It includes danger detection (straight, left, right), current direction, relative food direction, relative opponent head direction, and a length comparison flag.
+    \item \textbf{Cooperative Mode:} 1 agent with a feature vector of size 22. It includes expanded danger detection that accounts for the specific location of the other agent's body segments to prevent collisions. Controls both the snakes.
 \end{itemize}
 
 \subsection{Action Space}
@@ -229,10 +228,10 @@ Table \ref{tab:eval_results} summarizes the evaluation results for all models, i
 \section{Contributions}
 
 \begin{enumerate}
-    \item Karan Gandhi: Implemented Nash Q, Deep Nash Q and Q learning algorithms
-    \item Jaskirat Singh Maskeen: Training Models, Competitive results, Organising the cluttered repository, and Report.
-    \item Aarsh Wankar: Deep Q and double deep q and results for corporative.
-    \item Abhinav Khot: Monte Carlo and SARSA algorithm implementation.
+    \item Aarsh Wankar: Deep Q and double deep q and results for corporative. Also organized the repo :D.
+    \item Abhinav Khot: Monte Carlo and SARSA algorithm implementation. Also organized the repo ;).
+    \item Jaskirat Singh Maskeen: Training Models, Competitive results, Organising the cluttered repository :), and Report.
+    \item Karan Sagar Gandhi: Implemented Nash Q, Deep Nash Q and Q learning algorithms. Also implemented the Game and rendering logic for the setup.
 \end{enumerate}
 
 \section{Conclusion}
